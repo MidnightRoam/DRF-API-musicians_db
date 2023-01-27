@@ -7,13 +7,13 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.viewsets import ModelViewSet
 
 from .models import Musician, Song
-from .serializers import MusiciansListSerializer, MusicianDetailSerializer, SongsListSerializer
+from .serializers import MusiciansSerializer, SongsSerializer
 from .permissions import IsAuthorOrAdminOrReadOnly
 
 
 class MusicianAPIList(generics.ListCreateAPIView):
     """List of all musician in database"""
-    serializer_class = MusiciansListSerializer
+    serializer_class = MusiciansSerializer
     permission_classes = (IsAuthenticated, )
 
     def get_queryset(self):
@@ -22,24 +22,30 @@ class MusicianAPIList(generics.ListCreateAPIView):
 
 class MusicianAPIDetail(generics.RetrieveUpdateDestroyAPIView):
     """Detail musician view"""
-    serializer_class = MusicianDetailSerializer
+    serializer_class = MusiciansSerializer
     permission_classes = (IsAuthorOrAdminOrReadOnly, )
 
     def get_queryset(self):
         return Musician.objects.all()
 
 
-class SongsApiList(generics.ListCreateAPIView):
+class SongsViewSet(ModelViewSet):
     """List of all songs in database"""
-    serializer_class = SongsListSerializer
+    serializer_class = SongsSerializer
+    queryset = Song.objects.prefetch_related('musician_set').all()
 
-    def get_queryset(self):
-        return Song.objects.prefetch_related('musician_set').all()
+
+# class SongsApiList(generics.ListCreateAPIView):
+#     """List of all songs in database"""
+#     serializer_class = SongsListSerializer
+#
+#     def get_queryset(self):
+#         return Song.objects.prefetch_related('musician_set').all()
 
 
 class MusicianViewSet(ModelViewSet):
     queryset = Musician.objects.all()
-    serializer_class = MusiciansListSerializer
+    serializer_class = MusiciansSerializer
     permission_classes = (IsAuthenticated, IsAuthorOrAdminOrReadOnly)
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ('nickname', 'post_author')
