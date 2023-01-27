@@ -1,9 +1,11 @@
+from django.shortcuts import render
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
+from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
 from .models import Musician, Song
@@ -11,22 +13,22 @@ from .serializers import MusiciansSerializer, SongsSerializer
 from .permissions import IsAuthorOrAdminOrReadOnly
 
 
-class MusicianAPIList(generics.ListCreateAPIView):
-    """List of all musician in database"""
-    serializer_class = MusiciansSerializer
-    permission_classes = (IsAuthenticated, )
-
-    def get_queryset(self):
-        return Musician.objects.all()
-
-
-class MusicianAPIDetail(generics.RetrieveUpdateDestroyAPIView):
-    """Detail musician view"""
-    serializer_class = MusiciansSerializer
-    permission_classes = (IsAuthorOrAdminOrReadOnly, )
-
-    def get_queryset(self):
-        return Musician.objects.all()
+# class MusicianAPIList(generics.ListCreateAPIView):
+#     """List of all musician in database"""
+#     serializer_class = MusiciansSerializer
+#     permission_classes = (IsAuthenticated, )
+#
+#     def get_queryset(self):
+#         return Musician.objects.all()
+#
+#
+# class MusicianAPIDetail(generics.RetrieveUpdateDestroyAPIView):
+#     """Detail musician view"""
+#     serializer_class = MusiciansSerializer
+#     permission_classes = (IsAuthorOrAdminOrReadOnly, )
+#
+#     def get_queryset(self):
+#         return Musician.objects.all()
 
 
 class SongsViewSet(ModelViewSet):
@@ -46,6 +48,7 @@ class SongsViewSet(ModelViewSet):
 
 
 class MusicianViewSet(ModelViewSet):
+    """Musician model viewset"""
     queryset = Musician.objects.all()
     serializer_class = MusiciansSerializer
     permission_classes = (IsAuthenticated, IsAuthorOrAdminOrReadOnly)
@@ -61,3 +64,11 @@ class MusicianViewSet(ModelViewSet):
     # def retrieve(self, request, *args, **kwargs):
     #     """Detail musician"""
     #     return Musician.objects.all()
+
+
+class SocialAuth(APIView):
+    """Social auth API View"""
+    def get(self, request):
+        return render(request, 'oauth.html')
+
+

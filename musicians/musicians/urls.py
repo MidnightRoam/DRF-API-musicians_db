@@ -1,7 +1,7 @@
 from django.urls import path
 from rest_framework.routers import SimpleRouter
 
-from .views import MusicianAPIList, MusicianAPIDetail, SongsViewSet, MusicianViewSet
+from .views import SongsViewSet, MusicianViewSet
 
 app_name = "musicians"
 
