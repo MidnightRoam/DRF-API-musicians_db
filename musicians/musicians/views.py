@@ -33,7 +33,9 @@ class SongsViewSet(ModelViewSet):
     """List of all songs in database"""
     serializer_class = SongsSerializer
     queryset = Song.objects.prefetch_related('musician_set').all()
-
+    filterset_fields = ('title', )
+    search_fields = ('title', 'url')
+    ordering_fields = ('title', )
 
 # class SongsApiList(generics.ListCreateAPIView):
 #     """List of all songs in database"""
@@ -48,7 +50,7 @@ class MusicianViewSet(ModelViewSet):
     serializer_class = MusiciansSerializer
     permission_classes = (IsAuthenticated, IsAuthorOrAdminOrReadOnly)
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_fields = ('nickname', 'post_author')
+    filterset_fields = ('nickname', 'first_name', 'last_name')
     search_fields = ('nickname', 'first_name', 'last_name')
     ordering_fields = ('genre', 'age')
 
