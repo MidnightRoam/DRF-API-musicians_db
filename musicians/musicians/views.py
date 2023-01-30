@@ -3,14 +3,14 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
 from .models import Musician, Song
 from .serializers import MusiciansSerializer, SongsSerializer
-from .permissions import IsAuthorOrAdminOrReadOnly
+from .permissions import IsAuthorOrStaffOrReadOnly, IsStaffOrReadyOnly
 
 
 # class MusicianAPIList(generics.ListCreateAPIView):
@@ -35,6 +35,7 @@ class SongsViewSet(ModelViewSet):
     """List of all songs in database"""
     serializer_class = SongsSerializer
     queryset = Song.objects.prefetch_related('musician_set').all()
+    permission_classes = (IsStaffOrReadyOnly, )
     filterset_fields = ('title', )
     search_fields = ('title', 'url')
     ordering_fields = ('title', )
@@ -51,11 +52,16 @@ class MusicianViewSet(ModelViewSet):
     """Musician model viewset"""
     queryset = Musician.objects.all()
     serializer_class = MusiciansSerializer
-    permission_classes = (IsAuthenticated, IsAuthorOrAdminOrReadOnly)
+    permission_classes = (IsAuthenticatedOrReadOnly, IsAuthorOrStaffOrReadOnly)
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ('nickname', 'first_name', 'last_name')
     search_fields = ('nickname', 'first_name', 'last_name')
     ordering_fields = ('genre', 'age')
+
+    def perform_create(self, serializer):
+        """Automatically choosing current user as post author while creating"""
+        serializer.validated_data['post_author'] = self.request.user
+        serializer.save()
 
     # def list(self, request, *args, **kwargs):
     #     """List of all musician in database"""

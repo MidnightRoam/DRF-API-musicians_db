@@ -28,7 +28,7 @@ class Musician(models.Model):
     country = models.CharField(verbose_name='Country', max_length=124, blank=True)
     image = models.ImageField(verbose_name='Image', blank=True)
     is_published = models.BooleanField(verbose_name='Is published', default=True)
-    genre = models.ManyToManyField('Genre', verbose_name='Genres of music')
+    genre = models.ManyToManyField('Genre', verbose_name='Genres of music', blank=True)
     songs = models.ManyToManyField('Song', verbose_name='Songs', blank=True)
     post_author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Author of post', default=User)
 
