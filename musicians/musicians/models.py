@@ -30,7 +30,36 @@ class Musician(models.Model):
     is_published = models.BooleanField(verbose_name='Is published', default=True)
     genre = models.ManyToManyField('Genre', verbose_name='Genres of music', blank=True)
     songs = models.ManyToManyField('Song', verbose_name='Songs', blank=True)
-    post_author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Author of post', default=User)
+    post_author = models.ForeignKey(User,
+                                    on_delete=models.CASCADE,
+                                    verbose_name='Author of post',
+                                    default=User,
+                                    related_name='my_posts')
+    listeners = models.ManyToManyField(User,
+                                       through='UserFavoriteMusicians',
+                                       related_name='musicians')
 
     def __str__(self):
         return self.nickname
+
+
+class UserFavoriteMusicians(models.Model):
+    class Rate(models.IntegerChoices):
+        """Rating choices class"""
+        Awesome = 5
+        Good = 4
+        Ok = 3
+        Meh = 2
+        Bad = 1
+
+    musician = models.ForeignKey(Musician, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    like = models.BooleanField(default=False)
+    in_favorite = models.BooleanField(default=False)
+    rate = models.PositiveSmallIntegerField(choices=Rate.choices, null=True)
+
+    class Meta:
+        verbose_name_plural = "User favorite musicians"
+
+    def __str__(self):
+        return f'{self.user}: {self.musician}: {self.rate}'

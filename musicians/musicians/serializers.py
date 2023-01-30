@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Musician, Song
+from .models import Musician, Song, UserFavoriteMusicians
 
 
 class MusiciansSerializer(serializers.ModelSerializer):
@@ -18,3 +18,10 @@ class SongsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Song
         fields = '__all__'
+
+
+class UserMusicianRelationSerializer(serializers.ModelSerializer):
+    """User - musician relation serializer"""
+    class Meta:
+        model = UserFavoriteMusicians
+        fields = ('musician', 'like', 'in_favorite', 'rate')

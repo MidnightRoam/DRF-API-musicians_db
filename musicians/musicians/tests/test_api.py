@@ -5,7 +5,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from musicians.models import Song, Musician
+from musicians.models import Song, Musician, UserFavoriteMusicians
 from musicians.serializers import SongsSerializer, MusiciansSerializer
 
 
@@ -166,3 +166,66 @@ class MusicianAPITestCase(APITestCase):
     #     self.assertEqual(status.HTTP_200_OK, response.status_code)  # check if status code is "200"
     #     self.musician_1.refresh_from_db()
     #     self.assertEqual("http://new-test-url1.com", self.musician_1.url)
+
+
+class MusicianRelationTestCase(APITestCase):
+    """Musician - user relation API tests"""
+
+    def setUp(self):
+        self.user_staff = User.objects.create(username='test_admin', is_staff=True)
+        self.user = User.objects.create(username='test_user')
+        self.musician_1 = Musician.objects.create(first_name="Aboba 1",
+                                                  age=18,
+                                                  post_author=self.user_staff)
+        self.musician_2 = Musician.objects.create(first_name="Aboba 2",
+                                                  age=20,
+                                                  post_author=self.user)
+
+    def test_like(self):
+        """Like musician test"""
+        url = reverse('musicians:rate-detail', args=(self.musician_1.id,))
+        data = {
+            'like': True,
+        }
+        json_data = json.dumps(data)
+        self.client.force_login(self.user)
+        response = self.client.patch(url, data=json_data, content_type="application/json")
+        self.assertEqual(status.HTTP_200_OK, response.status_code)  # check if status code is "200"
+        relation = UserFavoriteMusicians.objects.get(user=self.user,
+                                                     musician=self.musician_1)
+        self.assertTrue(relation.like)
+
+        data = {
+            'in_favorite': True,
+        }
+        json_data = json.dumps(data)
+        response = self.client.patch(url, data=json_data, content_type="application/json")
+        self.assertEqual(status.HTTP_200_OK, response.status_code)  # check if status code is "200"
+        relation = UserFavoriteMusicians.objects.get(user=self.user,
+                                                     musician=self.musician_1)
+        self.assertTrue(relation.in_favorite)
+
+    def test_rate(self):
+        """Rate musician test"""
+        url = reverse('musicians:rate-detail', args=(self.musician_1.id,))
+        data = {
+            'rate': 5,
+        }
+        json_data = json.dumps(data)
+        self.client.force_login(self.user)
+        response = self.client.patch(url, data=json_data, content_type="application/json")
+        self.assertEqual(status.HTTP_200_OK, response.status_code)  # check if status code is "200"
+        relation = UserFavoriteMusicians.objects.get(user=self.user,
+                                                     musician=self.musician_1)
+        self.assertEqual(5, relation.rate)
+
+    def test_rate_wrong(self):
+        """Wrong rate musician test"""
+        url = reverse('musicians:rate-detail', args=(self.musician_1.id,))
+        data = {
+            'rate': 6,
+        }
+        json_data = json.dumps(data)
+        self.client.force_login(self.user)
+        response = self.client.patch(url, data=json_data, content_type="application/json")
+        self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code, response.data)  # check if status code is "200"
