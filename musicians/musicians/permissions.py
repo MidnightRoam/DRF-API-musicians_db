@@ -2,7 +2,9 @@ from rest_framework import permissions
 
 
 class IsAuthorOrStaffOrReadOnly(permissions.BasePermission):
-    """Allow to change the data of musician if it's author or staff else read only"""
+    """
+    Allow to change the data of musician if it's author or staff else read only
+    """
     def has_object_permission(self, request, view, obj):
         """
         Return `True` if permission is granted, `False` otherwise.
@@ -13,7 +15,9 @@ class IsAuthorOrStaffOrReadOnly(permissions.BasePermission):
 
 
 class IsStaffOrReadyOnly(permissions.BasePermission):
-    """Allow to change the data if it's staff else read only"""
+    """
+    Allow to change the data if it's staff else read only
+    """
     def has_permission(self, request, view):
         """
         Return `True` if permission is granted, `False` otherwise.

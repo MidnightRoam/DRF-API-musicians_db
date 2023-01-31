@@ -22,10 +22,11 @@ from musicians.views import SocialAuth
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/v1/musicians/', include('musicians.urls')),
+
     path('api/v1/base-auth/', include('rest_framework.urls')),  # Auth using rest framework
     path('api/v1/auth/', include('djoser.urls')),  # Auth using "Djoser" lib
     path('api/v1/auth_token/', include('djoser.urls.authtoken')),  # Auth using token
     path('', include('social_django.urls', namespace='social')),  # Auth using django social auth
     path('api/v1/social-auth/', SocialAuth.as_view()),
-    path('api/v1/musicians/', include('musicians.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

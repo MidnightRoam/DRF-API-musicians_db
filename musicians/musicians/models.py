@@ -59,7 +59,29 @@ class UserFavoriteMusicians(models.Model):
     rate = models.PositiveSmallIntegerField(choices=Rate.choices, null=True)
 
     class Meta:
-        verbose_name_plural = "User favorite musicians"
+        verbose_name_plural = "User musicians rating"
 
     def __str__(self):
         return f'{self.user}: {self.musician}: {self.rate}'
+
+
+class UserSongRelation(models.Model):
+    class Rate(models.IntegerChoices):
+        """Rating choices class"""
+        Awesome = 5
+        Good = 4
+        Ok = 3
+        Meh = 2
+        Bad = 1
+
+    song = models.ForeignKey(Song, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    like = models.BooleanField(default=False)
+    in_favorite = models.BooleanField(default=False)
+    rate = models.PositiveSmallIntegerField(choices=Rate.choices, null=True)
+
+    def __str__(self):
+        return f'{self.user}: {self.song}: {self.rate}'
+
+    class Meta:
+        verbose_name_plural = 'User songs rating'
