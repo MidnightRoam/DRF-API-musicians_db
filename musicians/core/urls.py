@@ -30,3 +30,14 @@ urlpatterns = [
     path('', include('social_django.urls', namespace='social')),  # Auth using django social auth
     path('api/v1/social-auth/', SocialAuth.as_view()),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+if settings.DEBUG:
+    import mimetypes
+    import debug_toolbar
+
+    mimetypes.add_type("application/javascript", ".js", True)
+
+    urlpatterns = [
+        path('__debug__/', include('debug_toolbar.urls')),
+    ] + urlpatterns

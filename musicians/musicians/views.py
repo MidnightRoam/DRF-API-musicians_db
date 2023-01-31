@@ -32,9 +32,8 @@ class MusicianViewSet(ModelViewSet):
     """Musician model viewset"""
     queryset = Musician.objects.all().annotate(
         annotated_likes=Count(Case(When(userfavoritemusicians__like=True, then=1))),
-        rating=Avg('userfavoritemusicians__rate'),
         in_favorites=Count(Case(When(userfavoritemusicians__in_favorite=True, then=1)))
-    )
+    ).select_related('post_author').prefetch_related('listeners')
     serializer_class = MusiciansSerializer
     permission_classes = (IsAuthenticatedOrReadOnly, IsAuthorOrStaffOrReadOnly)
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]

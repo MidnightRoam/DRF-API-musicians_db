@@ -1,5 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.db import models
+
+
 User = get_user_model()
 
 
@@ -38,6 +40,7 @@ class Musician(models.Model):
     listeners = models.ManyToManyField(User,
                                        through='UserFavoriteMusicians',
                                        related_name='musicians')
+    rating = models.DecimalField(max_digits=3, decimal_places=2, default=None, null=True)
 
     def __str__(self):
         return self.nickname
@@ -63,6 +66,21 @@ class UserFavoriteMusicians(models.Model):
 
     def __str__(self):
         return f'{self.user}: {self.musician}: {self.rate}'
+
+    def save(self, *args, **kwargs):
+        # Local import because cross imports
+        from .logic import set_rating
+
+        creating = not self.pk
+        old_rating = self.rate
+
+        super().save(*args, **kwargs)
+
+        new_rating = self.rate
+        # Recalculate the rating only when the old rating differs
+        # from the new rating, to optimize queries
+        if old_rating != new_rating or creating:
+            set_rating(self.musician)
 
 
 class UserSongRelation(models.Model):
