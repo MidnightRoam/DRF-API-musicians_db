@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django_filters',
     'social_django',
     "debug_toolbar",
+    'corsheaders',
 
     'musicians.apps.MusiciansConfig',
 ]
@@ -61,6 +62,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     "debug_toolbar.middleware.DebugToolbarMiddleware",
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -162,3 +164,5 @@ REST_FRAMEWORK = {
 
 SOCIAL_AUTH_GITHUB_KEY = '93bd52fabb3a6541d7c9'
 SOCIAL_AUTH_GITHUB_SECRET = '64f48d8b2ae1658be881149cca4349fa49de4d08'
+
+CORS_ORIGIN_ALLOW_ALL = True
