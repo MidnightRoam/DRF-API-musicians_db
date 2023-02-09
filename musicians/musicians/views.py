@@ -9,8 +9,8 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
 
-from .models import Musician, Song, UserFavoriteMusicians
-from .serializers import MusiciansSerializer, SongsSerializer, UserMusicianRelationSerializer
+from .models import Musician, Song, UserFavoriteMusicians, Genre
+from .serializers import MusiciansSerializer, SongsSerializer, UserMusicianRelationSerializer, GenreSerializer
 from .permissions import IsAuthorOrStaffOrReadOnly, IsStaffOrReadyOnly
 
 
@@ -45,6 +45,12 @@ class MusicianViewSet(ModelViewSet):
         """Automatically choosing current user as post author while creating"""
         serializer.validated_data['post_author'] = self.request.user
         serializer.save()
+
+
+class GenreViewSet(ModelViewSet):
+    """Genre model viewset"""
+    queryset = Genre.objects.all()
+    serializer_class = GenreSerializer
 
 
 class UserMusicianRelationsView(UpdateModelMixin, GenericViewSet):

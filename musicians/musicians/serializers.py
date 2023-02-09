@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 
-from .models import Musician, Song, UserFavoriteMusicians, UserSongRelation
+from .models import Musician, Song, UserFavoriteMusicians, UserSongRelation, Genre
 
 
 class MusicianListenerSerializer(serializers.ModelSerializer):
@@ -46,6 +46,12 @@ class SongsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Song
         fields = ('title', 'url', 'annotated_likes', 'rating', 'in_favorites')
+
+
+class GenreSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Genre
+        fields = '__all__'
 
 
 class UserMusicianRelationSerializer(serializers.ModelSerializer):
