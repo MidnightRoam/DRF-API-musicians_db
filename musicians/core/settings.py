@@ -159,10 +159,27 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
-    ]
+    ],
+    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    # 'PAGE_SIZE': 2
 }
 
 SOCIAL_AUTH_GITHUB_KEY = '93bd52fabb3a6541d7c9'
 SOCIAL_AUTH_GITHUB_SECRET = '64f48d8b2ae1658be881149cca4349fa49de4d08'
 
+# CORS Config
 CORS_ORIGIN_ALLOW_ALL = True
+
+CORS_ALLOW_HEADERS = [
+    "accept",
+    "accept-encoding",
+    "authorization",
+    "content-type",
+    "dnt",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+    "x-ratelimit-limit",
+    "x-total-count",
+]

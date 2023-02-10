@@ -11,6 +11,12 @@ class MusicianListenerSerializer(serializers.ModelSerializer):
         fields = ('first_name', 'last_name', 'username')
 
 
+class GenreSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Genre
+        fields = '__all__'
+
+
 class MusiciansSerializer(serializers.ModelSerializer):
     """Musician model serializer"""
     # Make a logged user as post author while creating a post
@@ -26,10 +32,11 @@ class MusiciansSerializer(serializers.ModelSerializer):
                                              read_only=True)
     # Musician listeners field
     listeners = MusicianListenerSerializer(many=True, read_only=True)
+    genre = GenreSerializer(many=True, read_only=True)
 
     class Meta:
         model = Musician
-        fields = ('first_name', 'last_name', 'nickname', 'content', 'age', 'city',
+        fields = ('id', 'first_name', 'last_name', 'nickname', 'content', 'age', 'city',
                   'country', 'image', 'genre', 'songs', 'post_author', 'annotated_likes',
                   'rating', 'in_favorites', 'post_author_name', 'listeners')
 
@@ -46,12 +53,6 @@ class SongsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Song
         fields = ('title', 'url', 'annotated_likes', 'rating', 'in_favorites')
-
-
-class GenreSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Genre
-        fields = '__all__'
 
 
 class UserMusicianRelationSerializer(serializers.ModelSerializer):
